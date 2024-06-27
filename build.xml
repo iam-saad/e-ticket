@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project basedir=".">
+    <target name="copy">
+        <copy file="${folder}/index.js" todir="src/constants" overwrite="true" />
+    </target>
+</project>
