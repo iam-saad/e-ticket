@@ -2,6 +2,7 @@ import axios from "axios";
 import swal from "sweetalert";
 import { appConstants } from "../../../../constants/appConstants";
 import Image from "next/image";
+import Link from "next/link";
 
 async function fetchTicketData(bookingId, theaterId) {
   try {
@@ -47,14 +48,11 @@ export default async function Page({ params }) {
   }
 
   return (
-    <>
     <section
       className="ptb-30"
-      style={
-        ticketData?.chain === "INOX"
-          ? { backgroundColor: "#DCE2EF" }
-          : { backgroundColor: "#F8F6F6" }
-      }
+      style={{
+        backgroundColor: ticketData?.chain === "INOX" ? "#DCE2EF" : "#F8F6F6",
+      }}
     >
       <div className="view-container container">
         {!ticketData ? (
@@ -62,20 +60,8 @@ export default async function Page({ params }) {
         ) : (
           <div className="row">
             <div className="col-lg-4 col-md-4 col-sm-12"></div>
-            <div
-              className={
-                isMobile
-                  ? "col-md-12 col-sm-12"
-                  : "col-lg-4 col-md-4 col-sm-12"
-              }
-            >
-              <div
-                className={
-                  ticketData?.chain === "INOX"
-                    ? "e-ticket-inox"
-                    : "e-ticket-pvr"
-                }
-              >
+            <div className={isMobile ? "col-md-12 col-sm-12" : "col-lg-4 col-md-4 col-sm-12"}>
+              <div className={ticketData?.chain === "INOX" ? "e-ticket-inox" : "e-ticket-pvr"}>
                 <div className="e-ticket-logo">
                   <Image
                     src="/assets/icons/pvrinox-star-logo.png"
@@ -93,8 +79,7 @@ export default async function Page({ params }) {
                         <p>{ticketData?.address}</p>
                         <h2>{ticketData?.orderFilmCinema?.filmName}</h2>
                         <h5>
-                          {ticketData?.orderFilmCinema?.language}{" "}
-                          {ticketData?.orderFilmCinema?.certificate}
+                          {ticketData?.orderFilmCinema?.language}{" "} {ticketData?.orderFilmCinema?.certificate}
                         </h5>
                       </div>
                     </div>
@@ -123,27 +108,23 @@ export default async function Page({ params }) {
                       <div className="eticket-date-time right-side">
                         <h6>Seats</h6>
                         <ul>
-                          {ticketData?.orderTicket?.seats
-                            ?.split(",")
-                            ?.map((item, idx) => {
-                              return <li key={idx}>{item}</li>;
-                            })}
+                          {ticketData?.orderTicket?.seats?.split(",").map((item, idx) => (
+                            <li key={idx}>{item}</li>
+                          ))}
                         </ul>
                       </div>
                     </div>
-                    {ticketData?.orderFood?.foods.length > 0 ? (
+                    {ticketData?.orderFood?.foods.length > 0 && (
                       <>
                         <div className="col-md-12 col-12">
                           <div className="eticket-date-time">
                             <h6>Food & Beverages</h6>
                             <h4>
-                              {ticketData?.orderFood?.foods?.map(
-                                (item, idx) => (
-                                  <span key={idx}>
-                                    {item.name} X {item.quantity}
-                                  </span>
-                                )
-                              )}
+                              {ticketData?.orderFood?.foods.map((item, idx) => (
+                                <span key={idx}>
+                                  {item.name} X {item.quantity}
+                                </span>
+                              ))}
                             </h4>
                           </div>
                         </div>
@@ -164,8 +145,6 @@ export default async function Page({ params }) {
                           </div>
                         </div>
                       </>
-                    ) : (
-                      ""
                     )}
                     <div className="col-md-12 col-12">
                       <div className="qr-details-eticket">
@@ -194,32 +173,22 @@ export default async function Page({ params }) {
                     </div>
                     <div className="col-md-12 col-12">
                       <div className="offer-eticket-container">
-                        {ticketData?.ph?.length > 0
-                          ? ticketData?.ph?.map((item, idx) => {
-                              return (
-                                <div className="offer-img" key={idx}>
-                                  <a
-                                    href={item?.redirectUrl}
-                                    target="_blank"
-                                  >
-                                    <Image
-                                      src={
-                                        item?.imageUrl
-                                          ? item?.imageUrl
-                                          : ticketData?.chain === "INOX"
-                                          ? "assets/default-images/horizontal-poster-inox.png"
-                                          : "assets/default-images/horizontal-poster-pvr.svg"
-                                      }
-                                      alt=""
-                                      // className="img-fluid rounded"
-                                      height={280}
-                                      width={200}
-                                    />
-                                  </a>
-                                </div>
-                              );
-                            })
-                          : ""}
+                        {ticketData?.ph?.length > 0 &&
+                          ticketData?.ph?.map((item, idx) => (
+                            <div className="offer-img" key={idx}>
+                              <Link href={item?.redirectUrl} target="_blank">
+                                <Image
+                                  src={item?.imageUrl || (ticketData?.chain === "INOX"
+                                    ? "assets/default-images/horizontal-poster-inox.png"
+                                    : "assets/default-images/horizontal-poster-pvr.svg")}
+                                  alt="horizontal-poster"
+                                  // className="img-fluid rounded"
+                                  height={280}
+                                  width={200}
+                                />
+                              </Link>
+                            </div>
+                          ))}
                       </div>
                     </div>
                     <div className="col-md-12 col-12">
@@ -228,43 +197,33 @@ export default async function Page({ params }) {
                       </div>
                       <div className="movies-show-two">
                         <div className="row">
-                          {ticketData?.recomendMovies
-                            ?.slice(0, 4)
-                            ?.map((item, idx) => {
-                              const defaultImgUrl =
-                                "assets/default-images/vertical-poster-inox.png";
-                              const imageUrl = item.miv || defaultImgUrl;
-                              return (
-                                <div className="col-6 col-md-6" key={idx}>
-                                  <div className="poster-show-recommended">
-                                    <a
-                                      href={
-                                        item.surl
-                                          ? item.surl
-                                          : ticketData?.chain === "INOX"
-                                          ? `https://www.inoxmovies.com/moviesessions/${item.n?.replace(
-                                              /\s/g,
-                                              "-"
-                                            )}/${item.id}`
-                                          : `https://www.pvrcinemas.com/moviesessions/${item.n?.replace(
-                                              /\s/g,
-                                              "-"
-                                            )}/${item.id}`
-                                      }
-                                      target="_blank"
-                                    >
-                                      <Image
-                                        src={imageUrl}
-                                        alt="poster"
-                                        // className="img-fluid"
-                                        width={200}
-                                        height={281}
-                                      />
-                                    </a>
-                                  </div>
+                          {ticketData?.recomendMovies?.slice(0, 4).map((item, idx) => {
+                            const defaultImgUrl = "assets/default-images/vertical-poster-inox.png";
+                            const imageUrl = item.miv || defaultImgUrl;
+                            return (
+                              <div className="col-6 col-md-6" key={idx}>
+                                <div className="poster-show-recommended">
+                                  <Link
+                                    href={
+                                      item.surl ||
+                                      (ticketData?.chain === "INOX"
+                                        ? `https://www.inoxmovies.com/moviesessions/${item.n?.replace(/\s/g, "-")}/${item.id}`
+                                        : `https://www.pvrcinemas.com/moviesessions/${item.n?.replace(/\s/g, "-")}/${item.id}`)
+                                    }
+                                    target="_blank"
+                                  >
+                                    <Image
+                                      src={imageUrl}
+                                      alt="poster"
+                                      // className="img-fluid"
+                                      width={200}
+                                      height={281}
+                                    />
+                                  </Link>
                                 </div>
-                              );
-                            })}
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     </div>
@@ -273,11 +232,10 @@ export default async function Page({ params }) {
                 <div className="poster-movies p-3">
                   <Image
                     src={
-                      ticketData?.orderFilmCinema?.posterVert
-                        ? ticketData?.orderFilmCinema.posterVert
-                        : ticketData?.chain === "INOX"
+                      ticketData?.orderFilmCinema?.posterVert ||
+                      (ticketData?.chain === "INOX"
                         ? "/assets/default-images/vertical-poster-inox.png"
-                        : "/assets/default-images/vertical-poster-pvr.svg"
+                        : "/assets/default-images/vertical-poster-pvr.svg")
                     }
                     alt=""
                     className="img-fluid"
@@ -288,7 +246,7 @@ export default async function Page({ params }) {
                 <div className="social-link">
                   <ul>
                     <li>
-                      <a
+                      <Link
                         href={
                           ticketData?.chain === "INOX"
                             ? "https://www.facebook.com/INOXLEISURE"
@@ -302,10 +260,10 @@ export default async function Page({ params }) {
                           width={20}
                           height={20}
                         />
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a
+                      <Link
                         href={
                           ticketData?.chain === "INOX"
                             ? "https://www.instagram.com/inoxmovies"
@@ -319,10 +277,10 @@ export default async function Page({ params }) {
                           width={20}
                           height={20}
                         />
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a
+                      <Link
                         href={
                           ticketData?.chain === "INOX"
                             ? "https://www.youtube.com/user/moviesatINOX"
@@ -336,10 +294,10 @@ export default async function Page({ params }) {
                           width={20}
                           height={20}
                         />
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a
+                      <Link
                         href={
                           ticketData?.chain === "INOX"
                             ? "https://twitter.com/INOXMovies"
@@ -353,10 +311,10 @@ export default async function Page({ params }) {
                           width={20}
                           height={20}
                         />
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a
+                      <Link
                         href={
                           ticketData?.chain === "INOX"
                             ? "https://www.linkedin.com/company/inox-leisure-ltd/?originalSubdomain=in"
@@ -370,14 +328,14 @@ export default async function Page({ params }) {
                           width={20}
                           height={20}
                         />
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </div>
                 <div className="Terms-eticket">
                   <ul>
                     <li>
-                      <a
+                      <Link
                         href={
                           ticketData?.chain === "INOX"
                             ? "https://www.inoxmovies.com/terms-conditions/booking"
@@ -386,10 +344,10 @@ export default async function Page({ params }) {
                         target="_blank"
                       >
                         Terms & Conditions
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a
+                      <Link
                         href={
                           ticketData?.chain === "INOX"
                             ? "https://www.inoxmovies.com/faq"
@@ -398,19 +356,19 @@ export default async function Page({ params }) {
                         target="_blank"
                       >
                         FAQs
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a
+                      <Link
                         href={
                           ticketData?.chain === "INOX"
                             ? "https://www.inoxmovies.com/feedback"
                             : "https://www.pvrcinemas.com/feedback"
-                        }
+                      }
                         target="_blank"
                       >
                         Feedback/Help
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </div>
@@ -421,6 +379,5 @@ export default async function Page({ params }) {
         )}
       </div>
     </section>
-  </>
   );
 }
